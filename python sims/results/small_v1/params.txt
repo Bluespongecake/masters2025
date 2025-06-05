@@ -1,0 +1,14 @@
+# Parameters
+L_AB = 15
+L_AC = 14.5
+L_CD = 20.006
+L_BD = 15.811
+initial_angle = 10  # degrees
+extension_length = 20
+
+rot = 71.6
+
+
+linkage = linkage_funcs.FourBarLinkage(L_AB, L_AC, L_CD, L_BD, initial_angle)
+angles, A_pos, C_pos, motion_type = linkage_funcs.run_simulation(linkage)
+linkage_funcs.plot_paths(A_pos, C_pos, linkage,angles=angles, num_snapshots=1)
