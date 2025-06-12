@@ -1,0 +1,8 @@
+Filename,Toe 1 force (N),Toe 2 force (N),Toe 3 force (N),Toe 4 force (N),Toe 1 area (cm²),Toe 2 area (cm²),Toe 3 area (cm²),Toe 4 area (cm²),Total force (N),Total area (cm²)
+flat 3kg w.csv,12.1,12.6,12.5,11.2,12.65,14.05,13.35,10.54,48.4,50.59
+11.7deg platforms - 3kg weight (i think- maybe hand).csv,3.1,5.3,2.0,6.3,6.32,6.32,6.32,6.32,16.8,25.29
+16.7deg platforms - 3kg weight.csv,6.2,3.6,8.2,16.6,9.13,8.43,9.13,10.54,34.5,37.24
+flat handweighted.csv,13.0,3.3,10.7,5.4,8.43,7.73,8.43,7.03,32.3,31.62
+11.7deg platforms - hand (i think- maybe hand).csv,10.2,14.8,8.8,4.7,9.13,13.35,6.32,6.32,38.6,35.13
+16.7deg platforms - handweight 1.csv,17.3,17.1,11.9,0.0,10.54,8.43,9.13,0.00,46.3,28.10
+16.7deg platforms - handweight.csv,14.8,17.1,12.4,1.4,8.43,8.43,9.13,4.92,45.7,30.91

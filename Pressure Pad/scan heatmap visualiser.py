@@ -5,7 +5,7 @@ Reads an arbitrary CSV exported from a pressure-sensor grid, converts the raw
 sensor values to engineering units (kPa, N, kg), crops away blank margins,
 and shows the calibrated map in a single colour plot.
 
-Author : <you>
+Author : max mccormack
 Date   : 2025-06-03
 """
 
@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 
 # ─── USER SETTINGS ────────────────────────────────────────────────────────────
-CSV_FILEPATH            = r"v5 0-10/flat h.csv"  # Path to your CSV log
+CSV_FILEPATH            = r"soft/white toe 0.csv"  # Path to your CSV log
 CAL_COEFFICIENT         = 224.8            # Device-specific calibration factor
 MAX_DISPLAY_PRESSURE    = 120              # kPa – top of colour scale
 SENSOR_AREA_CM2         = 0.702579         # Area of one sensel (any unit ok)
@@ -83,7 +83,10 @@ def show_pressure_map(matrix,
     """
     Display a single colour map of the sensor grid, cropped to non-zero region
     plus a configurable padding border. Zero cells are white.
+    Axes are scaled to show millimeter distances.
     """
+    CELL_SIZE_MM = 4  # Each cell is 4x4 mm
+
     if matrix.size == 0 or np.all((matrix == 0) | np.isnan(matrix)):
         print("Nothing to display – all cells are zero/NaN.")
         return
@@ -95,30 +98,35 @@ def show_pressure_map(matrix,
 
     r0, r1 = max(0, r_min - padding), min(matrix.shape[0], r_max + padding + 1)
     c0, c1 = max(0, c_min - padding), min(matrix.shape[1], c_max + padding + 1)
-
+    r1 = r0 + 35
+	
     cropped = matrix[r0:r1, c0:c1]
     masked  = np.ma.masked_where(cropped == 0, cropped)
 
     cmap = plt.cm.get_cmap("turbo").copy()
     cmap.set_bad(color="white")
 
-    plt.figure(figsize=(8, 7))
-    img = plt.imshow(masked, cmap=cmap, vmin=0, vmax=vmax,
-                     interpolation="nearest", aspect="equal")
-    plt.colorbar(img, label="Pressure (kPa)")
-    plt.title(title)
-    plt.xlabel("Column")
-    plt.ylabel("Row")
+    fig, ax = plt.subplots(figsize=(8, 7))
+    img = ax.imshow(masked, cmap=cmap, vmin=0, vmax=vmax,
+                    interpolation="nearest", aspect="equal",
+                    extent=[c0*CELL_SIZE_MM, c1*CELL_SIZE_MM,
+                            r1*CELL_SIZE_MM, r0*CELL_SIZE_MM])  # Flip y-axis
+
+    ax.set_title(title)
+    ax.set_xlabel("X position (mm)")
+    ax.set_ylabel("Y position (mm)")
+    plt.colorbar(img, label="Pressure (kPa)", ax=ax)
 
     # Peak annotation
     peak_val = np.nanmax(cropped)
+    peak_val = 0
     if peak_val > 0:
         pr, pc = np.unravel_index(np.nanargmax(cropped), cropped.shape)
-        plt.annotate(f"Peak: {peak_val:.2f} kPa",
-                     xy=(pc, pr), xytext=(pc + 2, pr + 2),
-                     arrowprops=dict(facecolor="grey", edgecolor="grey", width=2),
-                     bbox=dict(boxstyle="round,pad=0.3",
-                               fc="white", ec="black", lw=0.5))
+        ax.annotate(f"Peak: {peak_val:.2f} kPa",
+                    xy=((c0 + pc) * CELL_SIZE_MM, (r0 + pr) * CELL_SIZE_MM),
+                    xytext=((c0 + pc + 2) * CELL_SIZE_MM, (r0 + pr + 2) * CELL_SIZE_MM),
+                    arrowprops=dict(facecolor="grey", edgecolor="grey", width=2),
+                    bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="black", lw=0.5))
 
     plt.tight_layout()
     plt.show()
